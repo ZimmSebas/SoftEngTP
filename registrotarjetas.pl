@@ -1,5 +1,10 @@
-minSaldo = 0
-valorViaje = 100
+axiom(minsaldo).
+dec_p_type(minsaldo(int)).
+minsaldo() :- 0
+
+axiom(valorviaje).
+dec_p_type(valorviaje(int)).
+valorviaje() :- 100
 
 % VARIABLES
 
@@ -106,52 +111,6 @@ pagar(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
 
 
 
-%%%%%% OTHER SHITPOSTING %%%%%%
-
-alreadyLiked(State, State_, User_i, Post_i) :-
-    State_ = State &
-    State = [Author, Likes] &
-    [User_i, Post_i] in Likes.
-
-like(State, State_, User_i, Post_i) :-
-    likeOK(State, State_, User_i, Post_i)
-    or
-    postDoesNotExist(State, State_, Post_i)
-    or
-    alreadyLiked(State, State_, User_i, Post_i).
-
-% UNLIKE
-
-unlikeOK(State, State_, User_i, Post_i) :-
-    State = [Author, Likes] &
-    [User_i, Post_i] in Likes &
-    diff(Likes, {[User_i, Post_i]}, Likes_) &
-    State_ = [Author, Likes_].
-
-alreadyUnliked(State, State_, User_i, Post_i) :-
-    State_ = State &
-    State = [Author, Likes] &
-    dom(Author, AD) &
-    Post_i in AD &
-    [User_i, Post_i] nin Likes.
-
-unlike(State, State_, User_i, Post_i) :-
-    unlikeOK(State, State_, User_i, Post_i)
-    or
-    postDoesNotExist(State, State_, Post_i)
-    or
-    alreadyUnliked(State, State_, User_i, Post_i).
-
-% UNFOLLOW
-
-unfollow(State, State_, User1_i, User2_i) :-
-    State = [Author, Likes] &
-    dres({User1_i}, Likes, U1Likes) &
-    rres(Author, {User2_i}, U2PostsRel) &
-    dom(U2PostsRel, U2Posts) &
-    rres(U1Likes, U2Posts, U2PostsU1Liked) &
-    diff(Likes, U2PostsU1Liked, Likes_) &
-    State_ = [Author, Likes_].
 
 
 
