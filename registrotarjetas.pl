@@ -1,10 +1,5 @@
-axiom(minsaldo).
-dec_p_type(minsaldo(int)).
-minsaldo() :- 0
-
-axiom(valorviaje).
-dec_p_type(valorviaje(int)).
-valorviaje() :- 100
+minSaldo = 0.
+valorViaje = 100.
 
 % VARIABLES
 
@@ -56,9 +51,9 @@ tarjetaExistente(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
 operation(registro).
 dec_p_type(registro(ss, ss, rr, rr, tarj)).
 registro(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
-    registroOK(State, State_, Tarj_i)
+    registroOK(Saldos, Saldos_, Registro, Registro_, Tarj_i)
     or
-    tarjetaExistente(State, State_, Tarj_i).
+    tarjetaExistente(Saldos, Saldos_, Registro, Registro_, Tarj_i).
 
 % Cargar Saldo
 
@@ -67,9 +62,10 @@ cargarOK(Saldos, Saldos_, Registro, Registro_, Tarj_i, Monto_i) :-
     Registro_ = Registro &
     dom(Registro, TARJ) &
     Tarj_i in TARJ &
-    oplus(Saldos, , Saldos_)
+    applyTo(Saldos, Tarj_i, Monto) &
+    oplus(Saldos, [Tarj_i, Monto+Monto_i], Saldos_).
 
-dec_p_type(tarjetaInexistente(ss, ss, rr, rr, tarj, int)).
+dec_p_type(tarjetaInexistente(ss, ss, rr, rr, tarj)).
 tarjetaInexistente(Saldos, Saldos_, Registro, Registro_, Tarj_i).
     Saldos_ = Saldos &
     Registro_ = Registro &
@@ -78,8 +74,8 @@ tarjetaInexistente(Saldos, Saldos_, Registro, Registro_, Tarj_i).
 
 operation(cargar).
 dec_p_type(cargar(ss, ss, rr, rr, tarj, int)).
-cargar(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
-    cargarOK(Saldos, Saldos_, Registro, Registro_, Tarj_i)
+cargar(Saldos, Saldos_, Registro, Registro_, Tarj_i, Monto_i) :-
+    cargarOK(Saldos, Saldos_, Registro, Registro_, Tarj_i, Monto_i)
     or
     tarjetaInexistente(Saldos, Saldos_, Registro, Registro_, Tarj_i).
 
@@ -90,22 +86,24 @@ dec_p_type(pagarOK(ss, ss, rr, rr, tarj)).
 pagarOK(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
     Registro_ = Registro &
     dom(Registro, TARJ) &
-    applyTo(Saldos, Tarj_i, Monto) >= valorViaje &
-    oplus(Saldos, [Tarj_i, applyTo(Saldos, Tarj_i, Monto)-valorViaje], Saldos_)
+    applyTo(Saldos, Tarj_i, Monto) &
+    Monto >= valorViaje &
+    oplus(Saldos, [Tarj_i, Monto-valorViaje], Saldos_).
 
 dec_p_type(saldoInsuficiente(ss, ss, rr, rr, tarj)).
 saldoInsuficiente(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
     Saldos_ = Saldos &
     Registro_ = Registro &
     dom(Registro, TARJ) &
-    applyTo(Saldos, Tarj_i, Monto) < valorViaje
+    applyTo(Saldos, Tarj_i, Monto) &
+    Monto < valorViaje.
 
 operation(pagar).
 dec_p_type(pagar(ss, ss, rr, rr, tarj)).
 pagar(Saldos, Saldos_, Registro, Registro_, Tarj_i) :-
     pagarOK(Saldos, Saldos_, Registro, Registro_, Tarj_i)
     or
-    tarjetaInexistente(Saldos, Saldos_, Registro, Registro_, Tarj_i).
+    tarjetaInexistente(Saldos, Saldos_, Registro, Registro_, Tarj_i)
     or
     saldoInsuficiente(Saldos, Saldos_, Registro, Registro_, Tarj_i).
 
