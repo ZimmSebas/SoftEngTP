@@ -1,0 +1,113 @@
+\begin{zed}
+[TARJ]
+\end{zed}
+
+\begin{zed}
+MONTO == \nat 
+\end{zed}
+
+\begin{axdef}
+costoViaje : \nat \\
+castNula : \nat
+\where
+costoViaje = 100 \\
+castNula = 0
+\end{axdef}
+
+\begin{schema}{RegistroTarjetas}
+    saldos: TARJ \rel MONTO \\
+    registro: \power TARJ
+\end{schema}
+
+\begin{schema}{RegistroTarjetasInit}
+    RegistroTarjetas
+\where
+    saldos = \emptyset \\
+    registro = \emptyset
+\end{schema}
+
+\begin{schema}{InvariantePFun}
+    RegistroTarjetas
+\where
+    saldos \in TARJ \pfun MONTO
+\end{schema}
+
+\begin{schema}{InvarianteSaldo}
+    RegistroTarjetas
+\where
+    registro = \dom saldos
+\end{schema}
+
+\begin{schema}{RegistrarTarjetaOk}
+    \Delta RegistroTarjetas \\
+    t? : TARJ 
+\where
+    t? \notin registro \\ 
+    saldos' = saldos \cup \{(t? \mapsto 0)\} \\
+    registro' = registro \cup \{t?\} 
+\end{schema}
+
+\begin{schema}{TarjetaExistente}
+    \Xi RegistroTarjetas \\
+    t? : TARJ 
+\where
+    t? \in registro \\
+    t? \in \dom saldos 
+\end{schema}
+
+\begin{zed}
+    RegistrarTarjeta \defs RegistrarTarjetaOk \lor TarjetaExistente \\
+\end{zed}
+
+\begin{schema}{CargarSaldoOk}
+    \Delta RegistroTarjetas \\
+    t? : TARJ \\
+    m? : MONTO \\
+\where
+    t? \in registro \\
+    saldos' = saldos \cup \{(t? \mapsto (saldos(t?)+m?))\} \\
+\end{schema}
+
+\begin{schema}{TarjetaInexistente}
+    \Xi RegistroTarjetas \\
+    t? : TARJ \\
+\where
+    t? \notin registro \\ 
+\end{schema}
+
+\begin{zed}
+    CargarSaldo \defs TarjetaInexistente \lor CargarSaldoOk \\
+\end{zed}
+
+\begin{schema}{PagarViajeOk}
+    \Delta RegistroTarjetas \\
+    t? : TARJ 
+\where
+    t? \in registro \\
+    saldos(t?) \geq costoViaje \\
+    saldos' = saldos \cup \{(t? \mapsto (saldos(t?)-costoViaje))\} 
+\end{schema}
+
+\begin{schema}{MontoInsuficiente}
+    \Xi RegistroTarjetas \\
+    t? : TARJ 
+\where
+    saldos(t?) < costoViaje \\
+\end{schema}
+
+\begin{zed}
+    PagarViaje \defs PagarViajeOk \lor MontoInsuficiente \lor TarjetaInexistente \\
+\end{zed}
+
+\begin{theorem}{CargarPFun}
+    InvariantePFun \land  CargarSaldo \implies  InvariantePFun'
+\end{theorem}
+
+\begin{zproof}[CargarPFun]
+    split CargarSaldoOk;
+    cases;
+    prove by rewrite;
+    next;
+    prove by rewrite;
+    next;
+\end{zproof}
