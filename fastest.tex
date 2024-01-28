@@ -56,7 +56,7 @@ castNula = 0
 \end{schema}
 
 \begin{zed}
-    RegistrarTarjeta \defs RegistrarTarjetaOk \lor TarjetaExistente \\
+    RegistrarTarjeta == RegistrarTarjetaOk \lor TarjetaExistente \\
 \end{zed}
 
 \begin{schema}{CargarSaldoOk}
@@ -76,7 +76,7 @@ castNula = 0
 \end{schema}
 
 \begin{zed}
-    CargarSaldo \defs TarjetaInexistente \lor CargarSaldoOk \\
+    CargarSaldo == TarjetaInexistente \lor CargarSaldoOk \\
 \end{zed}
 
 \begin{schema}{PagarViajeOk}
@@ -96,20 +96,5 @@ castNula = 0
 \end{schema}
 
 \begin{zed}
-    PagarViaje \defs PagarViajeOk \lor MontoInsuficiente \lor TarjetaInexistente \\
+    PagarViaje == PagarViajeOk \lor MontoInsuficiente \lor TarjetaInexistente \\
 \end{zed}
-
-\begin{theorem}{RegistroPSaldo}
-    InvarianteSaldo \land  RegistrarTarjeta \implies  InvarianteSaldo'
-\end{theorem}
-
-\begin{zproof}[RegistroPSaldo]
-    invoke RegistrarTarjeta;
-    split RegistrarTarjetaOk;
-    cases;
-    reduce;
-    prove by rewrite;
-    next;
-    reduce;
-    next;
-\end{zproof}
