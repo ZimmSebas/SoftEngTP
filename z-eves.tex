@@ -6,14 +6,6 @@
 MONTO == \nat 
 \end{zed}
 
-\begin{axdef}
-costoViaje : \nat \\
-castNula : \nat
-\where
-costoViaje = 100 \\
-castNula = 0
-\end{axdef}
-
 \begin{schema}{RegistroTarjetas}
     saldos: TARJ \rel MONTO \\
     registro: \power TARJ
@@ -84,15 +76,15 @@ castNula = 0
     t? : TARJ 
 \where
     t? \in registro \\
-    saldos(t?) \geq costoViaje \\
-    saldos' = saldos \cup \{(t? \mapsto (saldos(t?)-costoViaje))\} 
+    saldos(t?) \geq 100 \\
+    saldos' = saldos \cup \{(t? \mapsto (saldos(t?)-100))\} 
 \end{schema}
 
 \begin{schema}{MontoInsuficiente}
     \Xi RegistroTarjetas \\
     t? : TARJ 
 \where
-    saldos(t?) < costoViaje \\
+    saldos(t?) < 100 \\
 \end{schema}
 
 \begin{zed}
