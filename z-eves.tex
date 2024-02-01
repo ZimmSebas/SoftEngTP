@@ -65,6 +65,7 @@ MONTO == \nat
     t? : TARJ \\
 \where
     t? \notin registro \\ 
+    t? \notin \dom saldos
 \end{schema}
 
 \begin{zed}
@@ -76,6 +77,7 @@ MONTO == \nat
     t? : TARJ 
 \where
     t? \in registro \\
+    t? \in \dom saldos \\
     saldos(t?) \geq 100 \\
     saldos' = saldos \cup \{(t? \mapsto (saldos(t?)-100))\} 
 \end{schema}

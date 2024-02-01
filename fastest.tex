@@ -8,10 +8,10 @@ MONTO == \nat
 
 \begin{axdef}
 costoViaje : \nat \\
-castNula : \nat
+montoNulo : \nat
 \where
 costoViaje = 100 \\
-castNula = 0
+montoNulo = 0
 \end{axdef}
 
 \begin{schema}{RegistroTarjetas}
@@ -43,6 +43,7 @@ castNula = 0
     t? : TARJ 
 \where
     t? \notin registro \\ 
+    t? \notin \dom registro \\
     saldos' = saldos \cup \{(t? \mapsto 0)\} \\
     registro' = registro \cup \{t?\} 
 \end{schema}
@@ -73,6 +74,7 @@ castNula = 0
     t? : TARJ \\
 \where
     t? \notin registro \\ 
+    t? \notin \dom registro
 \end{schema}
 
 \begin{zed}
@@ -84,6 +86,7 @@ castNula = 0
     t? : TARJ 
 \where
     t? \in registro \\
+    t? \in \dom saldos \\
     saldos(t?) \geq costoViaje \\
     saldos' = saldos \cup \{(t? \mapsto (saldos(t?)-costoViaje))\} 
 \end{schema}
